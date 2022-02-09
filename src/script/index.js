@@ -1,26 +1,34 @@
+import 'normalize.css';
+
 import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import Stats from 'stats.js';
 
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, 4 / 3, 0.1, 1000);
+import { renderer, scene, camera } from './init/three.js';
+import './init/ui.js';
 
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize(400, 300);
-document.body.appendChild(renderer.domElement);
+camera.position.z = 3;
 
-const geometry = new THREE.BoxGeometry();
-const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-const cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
+const controls = new OrbitControls(camera, renderer.domElement);
 
-camera.position.z = 5;
+controls.mouseButtons = {
+  MIDDLE: THREE.MOUSE.ROTATE
+}
 
-function animate() {
+window.addEventListener("resize", (event) => {
+  camera.aspect = viewport.offsetWidth / viewport.offsetHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(viewport.offsetWidth, viewport.offsetHeight);
+});
+
+const stats = new Stats();
+stats.showPanel(0);
+document.body.appendChild(stats.dom);
+
+(function animate() {
   requestAnimationFrame(animate);
 
-  cube.rotation.x += 0.01;
-  cube.rotation.y += 0.01;
-
+  stats.begin();
   renderer.render(scene, camera);
-};
-
-animate();
+  stats.end();
+})();
